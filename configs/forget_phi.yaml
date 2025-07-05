@@ -1,0 +1,74 @@
+model_family: phi 
+model_path: tofu/data/weight/ft_epoch5_lr${lro}_${model_family}_full_wd${weight_decay}/checkpoint-625
+save_dir: exp/${model_family}/${forget_loss}_${lr}_${split}_${num_epochs}_${weight_decay}_${hyper_param}_${ge_type}
+custom_sufix: false 
+
+
+
+
+LoRA:
+  r: 0
+  alpha: 32
+  dropout: 0.05
+
+lr: 2e-5 
+lro: 2e-5
+check_lr: false
+deepspeed: false
+
+
+split: forget10
+retain_set: retain90
+batch_size: 4
+gradient_accumulation_steps: 8
+num_epochs: 5
+forget_loss: npo_grad_diff
+ge_type: proj
+
+npo_coeff: 1.0
+grad_diff_coeff: 1.0
+KL_coeff: 1.0
+ref_policy: fine_tuned
+hyper_param: 0.1 #0.1
+weight_decay: 0.01 #0.01
+
+seed: 1001
+run_index: 1
+overwrite_dir: false
+eval_steps: 10
+warmup_steps: steps_per_epoch
+save_steps: 125
+
+
+eval:
+  #retain_result: data/${..retain_set}_llama_wd0.01/eval_results/ds_size300/eval_log_aggregated.json
+  model_path: ${..model_path}
+  model_family: ${..model_family}
+  save_dir: ${..save_dir}
+  aggr_save_dir: ${..aggr_save_dir}
+  data_path: [locuslab/TOFU, locuslab/TOFU, locuslab/TOFU, locuslab/TOFU]
+  split: ${..split}_perturbed
+  split_list:
+    - retain_perturbed
+    - real_authors_perturbed
+    - world_facts_perturbed
+    - ${split}
+
+  eval_task: [eval_log, eval_real_author_wo_options, eval_real_world_wo_options, eval_log_forget]
+  question_key: [question, question, question, question]
+  answer_key: [answer, answer, answer, answer]
+  base_answer_key: [paraphrased_answer, answer, answer, paraphrased_answer]
+  perturbed_answer_key: [perturbed_answer, perturbed_answer, perturbed_answer, perturbed_answer]
+
+  generation:
+    max_length: 200
+    max_new_tokens: null
+
+  save_generated_text: true
+
+  ds_size: 300
+
+  overwrite: true
+  use_pretrained: false
+
+  batch_size: 30

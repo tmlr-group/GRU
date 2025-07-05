@@ -1,0 +1,32 @@
+model_family: zephyr-7b-beta
+model_path: HuggingFaceH4/zephyr-7b-beta
+LoRA:
+  r: 0
+  alpha: 32
+  dropout: 0.05
+
+lr: 5e-5 #5e-5
+split: wmdp
+retain_set: wmdp
+batch_size: 4
+gradient_accumulation_steps: 8
+num_epochs: 10
+forget_loss: ga
+ge_type: proj
+max_norm: none
+
+
+ref_policy: fine_tuned
+hyper_param: 0.1
+weight_decay: 0.01
+
+seed: 1001
+run_index: 1
+overwrite_dir: false
+eval_steps: steps_per_epoch
+warmup_steps: steps_per_epoch
+save_steps: 1000
+
+save_dir: exp/${model_family}/${forget_loss}_${lr}_${max_norm}_${num_epochs}_${weight_decay}_${hyper_param}_${ge_type}
+
+eval: null

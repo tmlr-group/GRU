@@ -1,0 +1,32 @@
+model_family: MUSE
+model_path: MUSE
+LoRA:
+  r: 0
+  alpha: 32
+  dropout: 0.05
+
+lr: 1e-5 
+split: muse
+retain_set: muse
+batch_size: 4
+gradient_accumulation_steps: 8
+num_epochs: 1
+forget_loss: ga_ge
+ge_type: proj
+max_norm: none
+
+
+ref_policy: fine_tuned
+hyper_param: 0.1
+weight_decay: 0.01
+
+seed: 1001
+run_index: 1
+overwrite_dir: false
+eval_steps: steps_per_epoch
+warmup_steps: steps_per_epoch
+save_steps: 1000
+
+save_dir: exp/books/${model_family}/${forget_loss}_${lr}_${max_norm}_${num_epochs}_${weight_decay}_${hyper_param}_${ge_type}
+
+eval: null
